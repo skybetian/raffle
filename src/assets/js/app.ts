@@ -267,12 +267,12 @@ import SoundEffects from '@js/SoundEffects';
       backgroundAudioContext = new (window.AudioContext || window.webkitAudioContext)();
       
       // Load and decode background music
-      const backgroundResponse = await fetch('/src/assets/sound/halloween/spooky.mp3');
+      const backgroundResponse = await fetch('/assets/sound/halloween/spooky.mp3');
       const backgroundArrayBuffer = await backgroundResponse.arrayBuffer();
       backgroundAudioBuffer = await backgroundAudioContext.decodeAudioData(backgroundArrayBuffer);
       
       // Load and decode jumpscare sound
-      const jumpscareResponse = await fetch('/src/assets/sound/halloween/jumpscare.mp3');
+      const jumpscareResponse = await fetch('/assets/sound/halloween/jumpscare.mp3');
       const jumpscareArrayBuffer = await jumpscareResponse.arrayBuffer();
       jumpscareAudioBuffer = await backgroundAudioContext.decodeAudioData(jumpscareArrayBuffer);
       

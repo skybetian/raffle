@@ -50,8 +50,20 @@ export default defineConfig({
           dest: 'assets/images'
         },
         {
+          src: 'src/assets/images/halloween/*',
+          dest: 'assets/images/halloween'
+        },
+        {
+          src: 'src/assets/images/*.svg',
+          dest: 'assets/images'
+        },
+        {
           src: 'src/manifest.json',
           dest: ''
+        },
+        {
+          src: 'src/assets/sound/**/*',
+          dest: 'assets/sound'
         }
       ]
     }),
