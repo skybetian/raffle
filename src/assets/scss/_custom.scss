@@ -232,9 +232,10 @@ body {
 
   .winner-modal__circle {
     position: relative !important;
-    width: calc(100dvh - 20%) !important;
-    height: calc(100dvh - 20%) !important;
-    background-image: url('/assets/images/halloween/circle.png') !important;
+    width: 100% !important;
+    // height: auto !important;
+    height: calc(100dvh - 30%) !important;
+    background-image: url('/assets/images/halloween/winner.png') !important;
     background-size: contain !important;
     background-position: center !important;
     background-repeat: no-repeat !important;
@@ -249,6 +250,9 @@ body {
     color: #fe9b01 !important;
     padding: 3rem 0 !important;
     width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
   }
 
   .winner-modal__title {
@@ -260,9 +264,11 @@ body {
   }
 
   .winner-modal__name {
-    font-size: 3rem !important;
+    width: 25rem;
+    font-size: 2.2rem !important;
     font-weight: bold !important;
-    margin-bottom: 1.5rem !important;
+    // margin-bottom: 1.5rem !important;
+    margin-left: 1.5rem !important;
     color: #fff !important;
     text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9) !important;
     word-wrap: break-word !important;
