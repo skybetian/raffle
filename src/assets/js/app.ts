@@ -22,6 +22,16 @@ import SoundEffects from '@js/SoundEffects';
   const winnerModal = document.getElementById('winner-modal') as HTMLDivElement | null;
   const winnerNameDisplay = document.getElementById('winner-name') as HTMLDivElement | null;
   const closeWinnerModalButton = document.getElementById('close-winner-modal') as HTMLButtonElement | null;
+  const successModal = document.getElementById('success-modal') as HTMLDivElement | null;
+  const successMessage = document.getElementById('success-message') as HTMLDivElement | null;
+  const closeSuccessModalButton = document.getElementById('close-success-modal') as HTMLButtonElement | null;
+  const winnersButton = document.getElementById('winners-button') as HTMLButtonElement | null;
+  const winnersWrapper = document.getElementById('winners') as HTMLDivElement | null;
+  const winnersPanel = document.getElementById('winners-panel') as HTMLDivElement | null;
+  const winnersList = document.getElementById('winners-list') as HTMLDivElement | null;
+  const emptyWinners = document.getElementById('empty-winners') as HTMLDivElement | null;
+  const clearWinnersButton = document.getElementById('clear-winners') as HTMLButtonElement | null;
+  const winnersCloseButton = document.getElementById('winners-close') as HTMLButtonElement | null;
   const sadakoEffect = document.getElementById('sadako-effect') as HTMLDivElement | null;
 
   // Graceful exit if necessary elements are not found
@@ -44,6 +54,16 @@ import SoundEffects from '@js/SoundEffects';
     && winnerModal
     && winnerNameDisplay
     && closeWinnerModalButton
+    && successModal
+    && successMessage
+    && closeSuccessModalButton
+    && winnersButton
+    && winnersWrapper
+    && winnersPanel
+    && winnersList
+    && emptyWinners
+    && clearWinnersButton
+    && winnersCloseButton
     && sadakoEffect
   )) {
     console.error('One or more Element ID is invalid. This is possibly a bug.');
@@ -136,6 +156,9 @@ import SoundEffects from '@js/SoundEffects';
 
   /** Show winner modal with Halloween theme or Sadako effect in test mode */
   const showWinnerModal = (winner: string) => {
+    // Add winner to the list (for both test mode and normal mode)
+    addWinner(winner);
+    
     if (isTestMode) {
       showSadakoEffect();
     } else {
@@ -181,6 +204,105 @@ import SoundEffects from '@js/SoundEffects';
     setTimeout(() => {
       winnerModal.style.display = 'none';
     }, 300);
+  };
+
+  /** Show success modal */
+  const showSuccessModal = (message: string) => {
+    successMessage.textContent = message;
+    successModal.style.display = 'flex';
+    
+    setTimeout(() => {
+      successModal.classList.add('show');
+    }, 100);
+  };
+
+  /** Hide success modal */
+  const hideSuccessModal = () => {
+    successModal.classList.remove('show');
+    setTimeout(() => {
+      successModal.style.display = 'none';
+    }, 300);
+  };
+
+  /** Winners data management */
+  interface Winner {
+    name: string;
+    timestamp: number;
+    date: string;
+  }
+
+  let winners: Winner[] = [];
+
+  const loadWinners = () => {
+    try {
+      const stored = localStorage.getItem('random-picker-winners');
+      if (stored) {
+        winners = JSON.parse(stored);
+        updateWinnersDisplay();
+      }
+    } catch (error) {
+      console.error('Error loading winners:', error);
+      winners = [];
+    }
+  };
+
+  const saveWinners = () => {
+    try {
+      localStorage.setItem('random-picker-winners', JSON.stringify(winners));
+    } catch (error) {
+      console.error('Error saving winners:', error);
+    }
+  };
+
+  const addWinner = (name: string) => {
+    const now = new Date();
+    const winner: Winner = {
+      name,
+      timestamp: now.getTime(),
+      date: now.toLocaleString()
+    };
+    winners.unshift(winner);
+    saveWinners();
+    updateWinnersDisplay();
+  };
+
+  const clearAllWinners = () => {
+    winners = [];
+    saveWinners();
+    updateWinnersDisplay();
+  };
+
+  const updateWinnersDisplay = () => {
+    if (winners.length === 0) {
+      emptyWinners.style.display = 'block';
+      winnersList.querySelectorAll('.winner-item').forEach(item => item.remove());
+    } else {
+      emptyWinners.style.display = 'none';
+      winnersList.querySelectorAll('.winner-item').forEach(item => item.remove());
+      
+      winners.forEach((winner, index) => {
+        const winnerItem = document.createElement('div');
+        winnerItem.className = 'winner-item';
+        winnerItem.innerHTML = `
+          <div class="winner-info">
+            <div class="winner-name">${winner.name}</div>
+            <div class="winner-date">${winner.date}</div>
+          </div>
+          <div class="winner-rank">#${index + 1}</div>
+        `;
+        winnersList.appendChild(winnerItem);
+      });
+    }
+  };
+
+  /** Show winners sidebar */
+  const showWinnersPanel = () => {
+    winnersWrapper.style.display = 'block';
+  };
+
+  /** Hide winners sidebar */
+  const hideWinnersPanel = () => {
+    winnersWrapper.style.display = 'none';
   };
 
   /** Slot instance */
@@ -408,21 +530,10 @@ import SoundEffects from '@js/SoundEffects';
         }
         
         // Ask user if they want to append or replace existing names
-        const existingNames = nameListTextArea.value.trim();
-        let shouldAppend = false;
+        // Update the textarea - always replace existing names
+        nameListTextArea.value = names.join('\n');
         
-        if (existingNames.length > 0) {
-          shouldAppend = confirm(`Found ${names.length} names in CSV. Do you want to add them to the existing list?\n\nClick "OK" to add, "Cancel" to replace existing list.`);
-        }
-        
-        // Update the textarea
-        if (shouldAppend) {
-          nameListTextArea.value = existingNames + '\n' + names.join('\n');
-        } else {
-          nameListTextArea.value = names.join('\n');
-        }
-        
-        alert(`Successfully imported ${names.length} names from CSV file.`);
+        showSuccessModal(`Successfully imported ${names.length} names from CSV file.`);
         
       } catch (error) {
         console.error('Error parsing CSV:', error);
@@ -507,11 +618,42 @@ import SoundEffects from '@js/SoundEffects';
     }
   });
 
+  // Success modal event listeners
+  closeSuccessModalButton.addEventListener('click', hideSuccessModal);
+  
+  // Close success modal when clicking outside
+  successModal.addEventListener('click', (e) => {
+    if (e.target === successModal || e.target === successModal.querySelector('.winner-modal__overlay')) {
+      hideSuccessModal();
+    }
+  });
+
+  // Winners sidebar event listeners
+  winnersButton.addEventListener('click', showWinnersPanel);
+  winnersCloseButton.addEventListener('click', hideWinnersPanel);
+  
+  clearWinnersButton.addEventListener('click', () => {
+    if (winners.length > 0 && confirm('Are you sure you want to clear all winners? This action cannot be undone.')) {
+      clearAllWinners();
+    }
+  });
+  
+  // Close winners panel when clicking outside
+  winnersWrapper.addEventListener('click', (e) => {
+    if (e.target === winnersWrapper) {
+      hideWinnersPanel();
+    }
+  });
+
   // Close modal with Escape key
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       if (winnerModal.style.display === 'flex') {
         hideWinnerModal();
+      } else if (successModal.style.display === 'flex') {
+        hideSuccessModal();
+      } else if (winnersWrapper.style.display === 'block') {
+        hideWinnersPanel();
       } else if (sadakoEffect.style.display === 'flex') {
         hideSadakoEffect();
       }
@@ -524,4 +666,7 @@ import SoundEffects from '@js/SoundEffects';
       hideSadakoEffect();
     }
   });
+
+  // Initialize winners on page load
+  loadWinners();
 })();

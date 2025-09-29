@@ -41,12 +41,12 @@ body {
   }
 
   .logo {
-    background: url('/assets/images/halloween/logo.png') !important;
+    background: url('/assets/images/halloween/logo.gif') !important;
     background-size: contain !important;
     background-position: center !important;
     background-repeat: no-repeat !important;
     box-shadow: none !important;
-    height: 4rem !important;
+    height: 5rem !important;
     width: auto !important;
   }
 
@@ -153,6 +153,7 @@ body {
     top: calc(100dvh - 85%) !important;
     left: 7rem !important;
     z-index: 100;
+    pointer-events: none !important;
     animation: ghostCombined1 6s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite !important;
     transition: cubic-bezier(0.25, 0.46, 0.45, 0.94) 6s infinite;
   }
@@ -169,6 +170,7 @@ body {
     top: calc(100dvh - 80%) !important;
     right: 6rem !important;
     z-index: 100;
+    pointer-events: none !important;
     animation: ghostCombined2 7s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite !important;
     transition: cubic-bezier(0.25, 0.46, 0.45, 0.94) 6s infinite;
   }
@@ -189,6 +191,264 @@ body {
     svg {
       fill: #fe9b01 !important;
     }
+  }
+
+  .winners-list {
+    max-height: 300px !important;
+    overflow-y: auto !important;
+    margin-bottom: 1rem !important;
+    padding: 0.5rem !important;
+    border: 1px solid #fe9b01 !important;
+    border-radius: 0.25rem !important;
+    background-color: rgba(55, 4, 0, 0.3) !important;
+  }
+
+  // Winners sidebar theme matching settings sidebar
+  #winners {
+    .settings__panel {
+      background-color: #370400 !important;
+    }
+  }
+
+  #winners .settings__title {
+    color: #fe9b01 !important;
+  }
+
+  #clear-winners.solid-button {
+    background-color: transparent !important; 
+    border: 1px solid #fe9b01 !important;
+    color: #fe9b01 !important;
+  }
+
+  #winners-close.solid-button {
+    background-color: #fe9b01 !important;
+    color: #370400 !important;
+  }
+
+  // Bat overlay animations
+  .bat-overlay {
+    width: 100% !important;
+    height: 100% !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    z-index: 999 !important;
+    pointer-events: none !important;
+  }
+
+  .bat-overlay.bat-overlay-1 svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50% !important;
+    height: 50% !important;
+  }
+  
+  .bat-overlay.bat-overlay-2 svg {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50% !important;
+    height: 50% !important;
+  }
+
+  .bat-overlay.bat-overlay-3 svg {
+    position: absolute;
+    bottom: 0;
+    width: 50% !important;
+    height: 50% !important;
+  }
+
+  .shadow {
+    -webkit-filter: blur(6px) !important;
+    filter: blur(6px) !important;
+    opacity: 0.5 !important;
+  }
+
+  .bat {
+    animation-direction: normal !important;
+    animation: move 15s infinite !important;
+    animation-timing-function: ease-in-out !important;
+    transform-origin: 50% 50% !important;
+    fill: #000 !important;
+  }
+
+  .wing {
+    transform-origin: 50% 50% !important;
+    animation-direction: normal !important;
+    animation: wing 1s infinite !important;
+    animation-timing-function: ease-in-out !important;
+  }
+
+  .wing1 {
+    transform-origin: 50% 50% !important;
+    animation-direction: normal !important;
+    animation: wing1 1s infinite !important;
+    animation-timing-function: ease-in-out !important;
+  }
+
+  @keyframes move {
+    0% {
+      transform: translate(-50px, -150px) rotate(10deg);
+    }
+    25% {
+      transform: translate(-150px, 80px) rotate(-10deg);
+    }
+    50% {
+      transform: translate(50px, -80px) rotate(10deg);
+    }
+    75% {
+      transform: translate(-190px, -100px) rotate(-10deg);
+    }
+    100% {
+      transform: translate(-50px, -150px) rotate(10deg);
+    }
+  }
+
+  @keyframes wing {
+    0% {
+      transform: scale(1) rotate(0deg);
+    }
+    50% {
+      transform: scaleX(0.7) rotate(-10deg);
+    }
+    100% {
+      transform: scale(1) rotate(0deg);
+    }
+  }
+
+  @keyframes wing1 {
+    0% {
+      transform: scale(1) rotate(0deg);
+    }
+    50% {
+      transform: scaleX(0.7) rotate(10deg);
+    }
+    100% {
+      transform: scale(1) rotate(0deg);
+    }
+  }
+
+  // Individual bat positioning and animations
+  .bat-overlay-1 {
+    top: 50% !important;
+    left: 0 !important;
+    transform: translateY(-50%) !important;
+  }
+
+  .bat-overlay-2 {
+    top: 50% !important;
+    right: 0 !important;
+    left: auto !important;
+    transform: translateY(-50%) !important;
+  }
+
+  .bat-overlay-3 {
+    bottom: 0 !important;
+    top: auto !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+  }
+
+  .bat-2 {
+    animation: move2 18s infinite !important;
+    animation-timing-function: ease-in-out !important;
+    animation-delay: -5s !important;
+  }
+
+  .bat-3 {
+    animation: move3 12s infinite !important;
+    animation-timing-function: ease-in-out !important;
+    animation-delay: -8s !important;
+  }
+
+  @keyframes move2 {
+    0% {
+      transform: translate(100px, -100px) rotate(-10deg);
+    }
+    25% {
+      transform: translate(-30px, 60px) rotate(15deg);
+    }
+    50% {
+      transform: translate(170px, -60px) rotate(-5deg);
+    }
+    75% {
+      transform: translate(-50px, -120px) rotate(12deg);
+    }
+    100% {
+      transform: translate(100px, -100px) rotate(-10deg);
+    }
+  }
+
+  @keyframes move3 {
+    0% {
+      transform: translate(-20px, 100px) rotate(5deg);
+    }
+    30% {
+      transform: translate(90px, -40px) rotate(-12deg);
+    }
+    60% {
+      transform: translate(-110px, 50px) rotate(8deg);
+    }
+    100% {
+      transform: translate(-20px, 100px) rotate(5deg);
+    }
+  }
+
+  .empty-winners {
+    text-align: center !important;
+    color: #fe9b01 !important;
+    font-style: italic !important;
+    padding: 2rem !important;
+  }
+
+  .winner-item {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 0.75rem !important;
+    margin-bottom: 0.5rem !important;
+    background-color: rgba(254, 155, 1, 0.1) !important;
+    border: 1px solid rgba(254, 155, 1, 0.3) !important;
+    border-radius: 0.25rem !important;
+    transition: all 0.3s ease !important;
+  }
+
+  .winner-item:hover {
+    background-color: rgba(254, 155, 1, 0.2) !important;
+    border-color: #fe9b01 !important;
+  }
+
+  .winner-item:last-child {
+    margin-bottom: 0 !important;
+  }
+
+  .winner-info {
+    flex: 1 !important;
+  }
+
+  .winner-name {
+    font-weight: bold !important;
+    color: #fff !important;
+    font-size: 1rem !important;
+    margin-bottom: 0.25rem !important;
+  }
+
+  .winner-date {
+    color: #fe9b01 !important;
+    font-size: 0.75rem !important;
+    opacity: 0.8 !important;
+  }
+
+  .winner-rank {
+    background-color: #fe9b01 !important;
+    color: #370400 !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 1rem !important;
+    font-weight: bold !important;
+    font-size: 0.75rem !important;
+    min-width: 2rem !important;
+    text-align: center !important;
   }
 
   .winner-modal {
