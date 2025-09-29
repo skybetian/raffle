@@ -194,19 +194,33 @@ body {
   }
 
   .winners-list {
-    max-height: 300px !important;
+    flex: 1 !important;
     overflow-y: auto !important;
     margin-bottom: 1rem !important;
     padding: 0.5rem !important;
-    border: 1px solid #fe9b01 !important;
+    border: 1px solid #ddd !important;
     border-radius: 0.25rem !important;
-    background-color: rgba(55, 4, 0, 0.3) !important;
+    background-color: #ffffff !important;
+    min-height: 0 !important;
   }
 
   // Winners sidebar theme matching settings sidebar
   #winners {
     .settings__panel {
       background-color: #370400 !important;
+      display: flex !important;
+      flex-direction: column !important;
+    }
+    
+    .settings__panel__group:first-child {
+      flex: 1 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      min-height: 0 !important;
+    }
+    
+    .settings__panel__group:last-child {
+      flex-shrink: 0 !important;
     }
   }
 
@@ -215,14 +229,21 @@ body {
   }
 
   #clear-winners.solid-button {
+    background-color: #fe9b01 !important; 
+    color: #ffffff !important;
+  }
+
+  #winners-close.solid-button {
     background-color: transparent !important; 
     border: 1px solid #fe9b01 !important;
     color: #fe9b01 !important;
   }
 
-  #winners-close.solid-button {
-    background-color: #fe9b01 !important;
-    color: #370400 !important;
+  #clear-winners,
+  #winners-close {
+    margin: 1.875rem 0 0 0;
+    display: block;
+    width: 100%;
   }
 
   // Bat overlay animations
@@ -397,26 +418,37 @@ body {
 
   .empty-winners {
     text-align: center !important;
-    color: #fe9b01 !important;
+    color: #666666 !important;
     font-style: italic !important;
     padding: 2rem !important;
+  }
+
+  .generated-text {
+    position: absolute !important;
+    top: 1rem !important;
+    left: 1rem !important;
+    color: #fe9b01 !important;
+    font-weight: bold !important;
+    font-size: 1rem !important;
+    z-index: 150 !important;
+    font-family: monospace !important;
   }
 
   .winner-item {
     display: flex !important;
     justify-content: space-between !important;
-    align-items: center !important;
+    align-items: flex-start !important;
     padding: 0.75rem !important;
     margin-bottom: 0.5rem !important;
-    background-color: rgba(254, 155, 1, 0.1) !important;
-    border: 1px solid rgba(254, 155, 1, 0.3) !important;
+    background-color: #f8f9fa !important;
+    border: 1px solid #e9ecef !important;
     border-radius: 0.25rem !important;
     transition: all 0.3s ease !important;
   }
 
   .winner-item:hover {
-    background-color: rgba(254, 155, 1, 0.2) !important;
-    border-color: #fe9b01 !important;
+    background-color: #e9ecef !important;
+    border-color: #adb5bd !important;
   }
 
   .winner-item:last-child {
@@ -429,15 +461,22 @@ body {
 
   .winner-name {
     font-weight: bold !important;
-    color: #fff !important;
+    color: #000000 !important;
     font-size: 1rem !important;
     margin-bottom: 0.25rem !important;
   }
 
   .winner-date {
-    color: #fe9b01 !important;
+    color: #666666 !important;
     font-size: 0.75rem !important;
     opacity: 0.8 !important;
+  }
+
+  .winner-actions {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-end !important;
+    gap: 0.5rem !important;
   }
 
   .winner-rank {
@@ -449,6 +488,56 @@ body {
     font-size: 0.75rem !important;
     min-width: 2rem !important;
     text-align: center !important;
+  }
+
+  .winner-raffle {
+    color: #666666 !important;
+    font-size: 0.7rem !important;
+    opacity: 0.9 !important;
+    margin-top: 0.25rem !important;
+  }
+
+  .notification-badge {
+    font-size: 0.7rem !important;
+    padding: 0.2rem 0.4rem !important;
+    border-radius: 0.5rem !important;
+    font-weight: bold !important;
+    
+    &.notified {
+      background-color: rgba(34, 197, 94, 0.2) !important;
+      color: #22c55e !important;
+      border: 1px solid rgba(34, 197, 94, 0.3) !important;
+    }
+    
+    &.not-notified {
+      background-color: rgba(245, 158, 11, 0.2) !important;
+      color: #f59e0b !important;
+      border: 1px solid rgba(245, 158, 11, 0.3) !important;
+    }
+  }
+
+  .notify-btn {
+    background-color: #fe9b01 !important;
+    color: #370400 !important;
+    border: none !important;
+    padding: 0.3rem 0.6rem !important;
+    border-radius: 0.3rem !important;
+    font-size: 0.7rem !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    
+    &:hover:not(:disabled) {
+      background-color: #fff !important;
+      transform: translateY(-1px) !important;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+    }
+    
+    &:disabled {
+      opacity: 0.6 !important;
+      cursor: not-allowed !important;
+      background-color: #6b7280 !important;
+    }
   }
 
   .winner-modal {

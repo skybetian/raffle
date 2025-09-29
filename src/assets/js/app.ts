@@ -1,6 +1,7 @@
 import confetti from 'canvas-confetti';
 import Slot from '@js/Slot';
 import SoundEffects from '@js/SoundEffects';
+import { raffleAPI, type Winner as APIWinner, type CreateWinnerRequest } from '@js/api';
 
 // Initialize slot machine
 (() => {
@@ -225,15 +226,65 @@ import SoundEffects from '@js/SoundEffects';
   };
 
   /** Winners data management */
-  interface Winner {
+  interface LocalWinner {
     name: string;
     timestamp: number;
     date: string;
+    id?: number;
+    raffleId?: string;
+    notified?: boolean;
   }
 
-  let winners: Winner[] = [];
+  let winners: LocalWinner[] = [];
+  let isLoadingWinners = false;
 
-  const loadWinners = () => {
+  // Generate the BLUCKY raffle ID format
+  const generateBluckyRaffleId = (): string => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `BLUCKY${year}${month}${day}`;
+  };
+
+  // Generate a unique raffle ID for this session
+  const getCurrentRaffleId = (): string => {
+    return generateBluckyRaffleId();
+  };
+
+  const loadWinners = async () => {
+    if (isLoadingWinners) return;
+    
+    isLoadingWinners = true;
+    try {
+      // Try to load from API first with today's raffle ID
+      const raffleId = generateBluckyRaffleId();
+      const response = await raffleAPI.getAll({ limit: 100, raffleId });
+      
+      if (response.success && response.data) {
+        // Convert API winners to local format
+        winners = response.data.winners.map((apiWinner: APIWinner) => ({
+          name: apiWinner.playerUsername,
+          timestamp: new Date(apiWinner.timestamp).getTime(),
+          date: new Date(apiWinner.timestamp).toLocaleString(),
+          id: apiWinner.id,
+          raffleId: apiWinner.raffleId,
+          notified: apiWinner.notified
+        }));
+        updateWinnersDisplay();
+      } else {
+        console.warn('Failed to load winners from API, falling back to localStorage:', response.message);
+        loadWinnersFromLocalStorage();
+      }
+    } catch (error) {
+      console.error('Error loading winners from API:', error);
+      loadWinnersFromLocalStorage();
+    } finally {
+      isLoadingWinners = false;
+    }
+  };
+
+  const loadWinnersFromLocalStorage = () => {
     try {
       const stored = localStorage.getItem('random-picker-winners');
       if (stored) {
@@ -241,34 +292,74 @@ import SoundEffects from '@js/SoundEffects';
         updateWinnersDisplay();
       }
     } catch (error) {
-      console.error('Error loading winners:', error);
+      console.error('Error loading winners from localStorage:', error);
       winners = [];
     }
   };
 
-  const saveWinners = () => {
+  const saveWinnersToLocalStorage = () => {
     try {
       localStorage.setItem('random-picker-winners', JSON.stringify(winners));
     } catch (error) {
-      console.error('Error saving winners:', error);
+      console.error('Error saving winners to localStorage:', error);
     }
   };
 
-  const addWinner = (name: string) => {
+  const addWinner = async (name: string) => {
     const now = new Date();
-    const winner: Winner = {
+    const localWinner: LocalWinner = {
       name,
       timestamp: now.getTime(),
       date: now.toLocaleString()
     };
-    winners.unshift(winner);
-    saveWinners();
+
+    try {
+      // Try to save to API first
+      const winnerData: CreateWinnerRequest = {
+        playerUsername: name,
+        raffleId: getCurrentRaffleId(),
+        timestamp: now.toISOString(),
+        date: now.toISOString().split('T')[0]
+      };
+
+      const response = await raffleAPI.create(winnerData);
+      
+      if (response.success && response.data) {
+        // Add API response data to local winner
+        localWinner.id = response.data.id;
+        localWinner.raffleId = response.data.raffleId;
+        localWinner.notified = response.data.notified;
+        console.log('Winner saved to API successfully:', response.data);
+      } else {
+        console.warn('Failed to save winner to API:', response.message);
+      }
+    } catch (error) {
+      console.error('Error saving winner to API:', error);
+    }
+
+    // Always save locally as backup
+    winners.unshift(localWinner);
+    saveWinnersToLocalStorage();
     updateWinnersDisplay();
   };
 
-  const clearAllWinners = () => {
+  const clearAllWinners = async () => {
+    try {
+      // If we have API winners with IDs, try to delete them
+      const apiWinners = winners.filter(w => w.id);
+      
+      if (apiWinners.length > 0) {
+        // Note: This would require a bulk delete endpoint in the API
+        // For now, we'll just clear locally and let the next load refresh from API
+        console.log('Note: Bulk delete not implemented in API yet');
+      }
+    } catch (error) {
+      console.error('Error clearing winners from API:', error);
+    }
+
+    // Clear locally
     winners = [];
-    saveWinners();
+    saveWinnersToLocalStorage();
     updateWinnersDisplay();
   };
 
@@ -283,17 +374,49 @@ import SoundEffects from '@js/SoundEffects';
       winners.forEach((winner, index) => {
         const winnerItem = document.createElement('div');
         winnerItem.className = 'winner-item';
+        
         winnerItem.innerHTML = `
           <div class="winner-info">
             <div class="winner-name">${winner.name}</div>
             <div class="winner-date">${winner.date}</div>
           </div>
-          <div class="winner-rank">#${index + 1}</div>
+          <div class="winner-actions">
+            <div class="winner-rank">#${index + 1}</div>
+          </div>
         `;
+        
         winnersList.appendChild(winnerItem);
       });
     }
   };
+
+  // Add notification function (disabled - notification UI removed)
+  // const notifyWinner = async (winnerId: number) => {
+  //   try {
+  //     const response = await raffleAPI.notifyWinner(winnerId);
+  //     
+  //     if (response.success) {
+  //       console.log('Winner notified successfully:', response.data);
+  //       
+  //       // Update local winner status
+  //       const winnerIndex = winners.findIndex(w => w.id === winnerId);
+  //       if (winnerIndex !== -1) {
+  //         winners[winnerIndex].notified = true;
+  //         saveWinnersToLocalStorage();
+  //         updateWinnersDisplay();
+  //       }
+  //       
+  //       // Show success message
+  //       showSuccessModal('Winner has been notified successfully!');
+  //     } else {
+  //       console.error('Failed to notify winner:', response.message);
+  //       alert(`Failed to notify winner: ${response.message}`);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error notifying winner:', error);
+  //     alert('An error occurred while notifying the winner. Please try again.');
+  //   }
+  // };
 
   /** Show winners sidebar */
   const showWinnersPanel = () => {
@@ -487,8 +610,8 @@ import SoundEffects from '@js/SoundEffects';
     const names: string[] = [];
     
     lines.forEach((line, index) => {
-      // Skip potential header row if it contains common CSV headers
-      if (index === 0 && /^(name|username|user|person|participant)/i.test(line)) {
+      // Always skip the first row (header)
+      if (index === 0) {
         return;
       }
       
@@ -529,11 +652,27 @@ import SoundEffects from '@js/SoundEffects';
           return;
         }
         
-        // Ask user if they want to append or replace existing names
-        // Update the textarea - always replace existing names
-        nameListTextArea.value = names.join('\n');
+        // Filter out existing winners to prevent them from being drawn again
+        const existingWinnerNames = winners.map(w => w.name.toLowerCase());
+        const filteredNames = names.filter(name => 
+          !existingWinnerNames.includes(name.toLowerCase())
+        );
+        const excludedCount = names.length - filteredNames.length;
         
-        showSuccessModal(`Successfully imported ${names.length} names from CSV file.`);
+        if (filteredNames.length === 0) {
+          alert('All names in the CSV file are already winners. No new names to import.');
+          return;
+        }
+        
+        // Update the textarea - always replace existing names
+        nameListTextArea.value = filteredNames.join('\n');
+        
+        // Show success message with exclusion info
+        let successMessage = `Successfully imported ${filteredNames.length} names from CSV file.`;
+        if (excludedCount > 0) {
+          successMessage += ` ${excludedCount} previous winner(s) were excluded.`;
+        }
+        showSuccessModal(successMessage);
         
       } catch (error) {
         console.error('Error parsing CSV:', error);
@@ -669,4 +808,15 @@ import SoundEffects from '@js/SoundEffects';
 
   // Initialize winners on page load
   loadWinners();
+
+  // Generate and display the text in left corner
+  const generateText = () => {
+    return generateBluckyRaffleId();
+  };
+
+  // Update generated text
+  const generatedTextElement = document.getElementById('generated-text') as HTMLDivElement | null;
+  if (generatedTextElement) {
+    generatedTextElement.textContent = generateText();
+  }
 })();
