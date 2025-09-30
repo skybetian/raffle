@@ -500,9 +500,18 @@ import type { HalloweenTheme } from '@js/halloween-theme';
 
   // Click handler for "Save" button for setting page
   settingsSaveButton.addEventListener('click', () => {
-    slot.names = nameListTextArea.value
+    const inputNames = nameListTextArea.value
       ? nameListTextArea.value.split(/\n/).filter((name) => Boolean(name.trim()))
       : [];
+    
+    // Filter out existing winners to prevent them from being drawn again
+    const existingWinnerNames = winners.map(w => w.name.toLowerCase());
+    const filteredNames = inputNames.filter(name => 
+      !existingWinnerNames.includes(name.toLowerCase())
+    );
+    const excludedCount = inputNames.length - filteredNames.length;
+    
+    slot.names = filteredNames;
     slot.shouldRemoveWinnerFromNameList = removeNameFromListCheckbox.checked;
     soundEffects.mute = !enableSoundCheckbox.checked;
     
@@ -511,6 +520,15 @@ import type { HalloweenTheme } from '@js/halloween-theme';
       loadHalloweenTheme().then(theme => theme?.startBackgroundMusic());
     } else if (!enableBackgroundMusicCheckbox.checked && halloweenTheme?.isBackgroundMusicPlaying()) {
       halloweenTheme?.stopBackgroundMusic();
+    }
+    
+    // Show success message if winners were excluded
+    if (excludedCount > 0) {
+      let message = `${excludedCount} previous winner(s) were excluded from the name list.`;
+      if (filteredNames.length === 0) {
+        message = 'All entered names are already winners. No names available for drawing.';
+      }
+      showSuccessModal(message);
     }
     
     onSettingsClose();
