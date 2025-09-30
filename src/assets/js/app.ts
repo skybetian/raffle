@@ -2,6 +2,7 @@ import confetti from 'canvas-confetti';
 import Slot from '@js/Slot';
 import SoundEffects from '@js/SoundEffects';
 import { raffleAPI, type Winner as APIWinner, type CreateWinnerRequest } from '@js/api';
+import type { HalloweenTheme } from '@js/halloween-theme';
 
 // Initialize slot machine
 (() => {
@@ -79,17 +80,26 @@ import { raffleAPI, type Winner as APIWinner, type CreateWinnerRequest } from '@
   const soundEffects = new SoundEffects();
   const MAX_REEL_ITEMS = 40;
   const CONFETTI_COLORS = ['#26ccff', '#a25afd', '#ff5e7e', '#88ff5a', '#fcff42', '#ffa62d', '#ff36ff'];
-  let confettiAnimationId;
+  let confettiAnimationId: number;
 
-  // Halloween background music using Web Audio API
-  let backgroundAudioContext: AudioContext | null = null;
-  let backgroundAudioBuffer: AudioBuffer | null = null;
-  let backgroundSource: AudioBufferSourceNode | null = null;
-  let backgroundGainNode: GainNode | null = null;
-  let isBackgroundMusicPlaying = false;
-
-  // Jumpscare sound effect
-  let jumpscareAudioBuffer: AudioBuffer | null = null;
+  // Halloween theme - loaded dynamically for better performance
+  let halloweenTheme: HalloweenTheme | null = null;
+  
+  // Load Halloween theme only when needed
+  const loadHalloweenTheme = async (): Promise<HalloweenTheme | null> => {
+    if (!halloweenTheme) {
+      try {
+        const { HalloweenTheme } = await import('@js/halloween-theme');
+        halloweenTheme = new HalloweenTheme(soundEffects);
+        await halloweenTheme.initializeAudio();
+        console.log('Halloween theme loaded dynamically');
+      } catch (error) {
+        console.error('Failed to load Halloween theme:', error);
+        return null;
+      }
+    }
+    return halloweenTheme;
+  };
 
   // Check if test mode is enabled
   const urlParams = new URLSearchParams(window.location.search);
@@ -131,9 +141,9 @@ import { raffleAPI, type Winner as APIWinner, type CreateWinnerRequest } from '@
     stopWinningAnimation();
     drawButton.disabled = true;
     settingsButton.disabled = true;
-    // Lower background music volume during spin
-    if (isBackgroundMusicPlaying && backgroundGainNode) {
-      backgroundGainNode.gain.value = 0.2;
+    // Lower background music volume during spin (if Halloween theme is loaded)
+    if (halloweenTheme?.isBackgroundMusicPlaying()) {
+      halloweenTheme.setBackgroundMusicVolume(0.2);
     }
     soundEffects.spin((MAX_REEL_ITEMS - 1) / 10);
   };
@@ -143,9 +153,9 @@ import { raffleAPI, type Winner as APIWinner, type CreateWinnerRequest } from '@
     confettiAnimation();
     sunburstSvg.style.display = 'block';
     await soundEffects.win();
-    // Restore background music volume after spin
-    if (isBackgroundMusicPlaying && backgroundGainNode) {
-      backgroundGainNode.gain.value = 0.3;
+    // Restore background music volume after spin (if Halloween theme is loaded)
+    if (halloweenTheme?.isBackgroundMusicPlaying()) {
+      halloweenTheme.setBackgroundMusicVolume(0.3);
     }
     
     // Show winner modal
@@ -173,30 +183,34 @@ import { raffleAPI, type Winner as APIWinner, type CreateWinnerRequest } from '@
     }
   };
 
-  /** Show shocking Sadako effect */
-  const showSadakoEffect = () => {
-    sadakoEffect.style.display = 'flex';
-    
-    // Play jumpscare sound immediately
-    playJumpscareSound();
-    
-    // Add shocking effect immediately
-    setTimeout(() => {
-      sadakoEffect.classList.add('show');
-    }, 50);
-
-    // Auto-hide after 4 seconds
-    setTimeout(() => {
-      hideSadakoEffect();
-    }, 4000);
+  /** Show shocking Sadako effect using Halloween theme */
+  const showSadakoEffect = async () => {
+    const theme = await loadHalloweenTheme();
+    if (theme) {
+      theme.showSadakoEffect(sadakoEffect);
+    } else {
+      // Fallback if Halloween theme fails to load
+      sadakoEffect.style.display = 'flex';
+      setTimeout(() => {
+        sadakoEffect.classList.add('show');
+      }, 50);
+      setTimeout(() => {
+        hideSadakoEffect();
+      }, 4000);
+    }
   };
 
   /** Hide Sadako effect */
   const hideSadakoEffect = () => {
-    sadakoEffect.classList.remove('show');
-    setTimeout(() => {
-      sadakoEffect.style.display = 'none';
-    }, 500);
+    if (halloweenTheme) {
+      halloweenTheme.hideSadakoEffect(sadakoEffect);
+    } else {
+      // Fallback
+      sadakoEffect.classList.remove('show');
+      setTimeout(() => {
+        sadakoEffect.style.display = 'none';
+      }, 500);
+    }
   };
 
   /** Hide winner modal */
@@ -442,7 +456,7 @@ import { raffleAPI, type Winner as APIWinner, type CreateWinnerRequest } from '@
     nameListTextArea.value = slot.names.length ? slot.names.join('\n') : '';
     removeNameFromListCheckbox.checked = slot.shouldRemoveWinnerFromNameList;
     enableSoundCheckbox.checked = !soundEffects.mute;
-    enableBackgroundMusicCheckbox.checked = isBackgroundMusicPlaying || enableBackgroundMusicCheckbox.checked;
+    enableBackgroundMusicCheckbox.checked = halloweenTheme?.isBackgroundMusicPlaying() || enableBackgroundMusicCheckbox.checked;
     settingsWrapper.style.display = 'block';
   };
 
@@ -492,11 +506,11 @@ import { raffleAPI, type Winner as APIWinner, type CreateWinnerRequest } from '@
     slot.shouldRemoveWinnerFromNameList = removeNameFromListCheckbox.checked;
     soundEffects.mute = !enableSoundCheckbox.checked;
     
-    // Handle background music enable/disable
-    if (enableBackgroundMusicCheckbox.checked && !isBackgroundMusicPlaying) {
-      startBackgroundMusic();
-    } else if (!enableBackgroundMusicCheckbox.checked && isBackgroundMusicPlaying) {
-      stopBackgroundMusic();
+    // Handle background music enable/disable with Halloween theme
+    if (enableBackgroundMusicCheckbox.checked && !halloweenTheme?.isBackgroundMusicPlaying()) {
+      loadHalloweenTheme().then(theme => theme?.startBackgroundMusic());
+    } else if (!enableBackgroundMusicCheckbox.checked && halloweenTheme?.isBackgroundMusicPlaying()) {
+      halloweenTheme?.stopBackgroundMusic();
     }
     
     onSettingsClose();
@@ -505,99 +519,14 @@ import { raffleAPI, type Winner as APIWinner, type CreateWinnerRequest } from '@
   // Click handler for "Discard and close" button for setting page
   settingsCloseButton.addEventListener('click', onSettingsClose);
 
-  // Initialize Web Audio API for background music and jumpscare sound
-  const initBackgroundMusic = async () => {
-    try {
-      // Create AudioContext
-      backgroundAudioContext = new (window.AudioContext || window.webkitAudioContext)();
-      
-      // Load and decode background music
-      const backgroundResponse = await fetch('/assets/sound/halloween/spooky.mp3');
-      const backgroundArrayBuffer = await backgroundResponse.arrayBuffer();
-      backgroundAudioBuffer = await backgroundAudioContext.decodeAudioData(backgroundArrayBuffer);
-      
-      // Load and decode jumpscare sound
-      const jumpscareResponse = await fetch('/assets/sound/halloween/jumpscare.mp3');
-      const jumpscareArrayBuffer = await jumpscareResponse.arrayBuffer();
-      jumpscareAudioBuffer = await backgroundAudioContext.decodeAudioData(jumpscareArrayBuffer);
-      
-      // Create gain node for volume control
-      backgroundGainNode = backgroundAudioContext.createGain();
-      backgroundGainNode.connect(backgroundAudioContext.destination);
-      backgroundGainNode.gain.value = 0.3;
-      
-      console.log('Background music and jumpscare sound loaded successfully');
-    } catch (error) {
-      console.error('Failed to load audio files:', error);
-    }
-  };
+  // Initialize Halloween theme lazily when first interaction occurs
 
-  // Background music functions
-  const startBackgroundMusic = async () => {
-    if (!soundEffects.mute && enableBackgroundMusicCheckbox.checked && !isBackgroundMusicPlaying && backgroundAudioContext && backgroundAudioBuffer && backgroundGainNode) {
-      try {
-        // Resume audio context if suspended
-        if (backgroundAudioContext.state === 'suspended') {
-          await backgroundAudioContext.resume();
-        }
-        
-        // Create new source (required for each play)
-        backgroundSource = backgroundAudioContext.createBufferSource();
-        backgroundSource.buffer = backgroundAudioBuffer;
-        backgroundSource.loop = true;
-        backgroundSource.connect(backgroundGainNode);
-        
-        backgroundSource.start();
-        isBackgroundMusicPlaying = true;
-        console.log('Background music started');
-      } catch (error) {
-        console.log('Background music start failed:', error);
-      }
-    }
-  };
-
-  const stopBackgroundMusic = () => {
-    if (isBackgroundMusicPlaying && backgroundSource) {
-      backgroundSource.stop();
-      backgroundSource = null;
-      isBackgroundMusicPlaying = false;
-      console.log('Background music stopped');
-    }
-  };
-
-  // Play jumpscare sound effect
-  const playJumpscareSound = async () => {
-    if (!soundEffects.mute && backgroundAudioContext && jumpscareAudioBuffer) {
-      try {
-        // Resume audio context if suspended
-        if (backgroundAudioContext.state === 'suspended') {
-          await backgroundAudioContext.resume();
-        }
-        
-        // Create new source for jumpscare sound
-        const jumpscareSource = backgroundAudioContext.createBufferSource();
-        const jumpscareGain = backgroundAudioContext.createGain();
-        
-        jumpscareSource.buffer = jumpscareAudioBuffer;
-        jumpscareGain.gain.value = 0.8; // Louder volume for jumpscare effect
-        
-        jumpscareSource.connect(jumpscareGain);
-        jumpscareGain.connect(backgroundAudioContext.destination);
-        
-        jumpscareSource.start();
-        console.log('Jumpscare sound played');
-      } catch (error) {
-        console.log('Jumpscare sound play failed:', error);
-      }
-    }
-  };
-
-  // Initialize background music on page load
-  initBackgroundMusic();
-
-  // Start music on first user interaction
+  // Start Halloween theme and music on first user interaction
   const startMusicOnInteraction = async () => {
-    await startBackgroundMusic();
+    const theme = await loadHalloweenTheme();
+    if (theme && enableBackgroundMusicCheckbox.checked) {
+      await theme.startBackgroundMusic();
+    }
     document.removeEventListener('click', startMusicOnInteraction);
     document.removeEventListener('keydown', startMusicOnInteraction);
   };

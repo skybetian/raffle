@@ -3,11 +3,28 @@ body {
 
   #app {
     background-color: #370400 !important;
+    // Fallback solid color while background loads
     background-image: url('/assets/images/halloween/bg.png') !important;
+      // linear-gradient(45deg, #370400 0%, #4a0500 50%, #370400 100%),
     background-size: cover !important;
     background-position: center !important;
     background-repeat: no-repeat !important;
     overflow: hidden !important;
+    
+    // Smooth transition when background loads
+    transition: background-image 0.3s ease-in-out;
+  }
+  
+  // Preload critical background images
+  &::before {
+    content: '';
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+    background: 
+      url('/assets/images/halloween/bg.png'),
+      url('/assets/images/halloween/winner.png');
+    background-size: 1px 1px;
   }
 
   .settings__panel {
@@ -41,13 +58,26 @@ body {
   }
 
   .logo {
-    background: url('/assets/images/halloween/logo.gif') !important;
+    // Use smaller static PNG instead of 6.7MB GIF for better performance
+    background: url('/assets/images/halloween/logo.png') !important;
     background-size: contain !important;
     background-position: center !important;
     background-repeat: no-repeat !important;
     box-shadow: none !important;
     height: 5rem !important;
     width: auto !important;
+    
+    // Add subtle animation to compensate for static image
+    animation: logoGlow 3s ease-in-out infinite alternate !important;
+  }
+  
+  @keyframes logoGlow {
+    0% {
+      filter: drop-shadow(0 0 5px rgba(254, 155, 1, 0.3));
+    }
+    100% {
+      filter: drop-shadow(0 0 15px rgba(254, 155, 1, 0.7));
+    }
   }
 
   .control-group {
@@ -198,9 +228,9 @@ body {
     overflow-y: auto !important;
     margin-bottom: 1rem !important;
     padding: 0.5rem !important;
-    border: 1px solid #ddd !important;
+    border: 1px solid #752c26 !important;
     border-radius: 0.25rem !important;
-    background-color: #ffffff !important;
+    background-color: #752c26 !important;
     min-height: 0 !important;
   }
 
@@ -440,15 +470,15 @@ body {
     align-items: flex-start !important;
     padding: 0.75rem !important;
     margin-bottom: 0.5rem !important;
-    background-color: #f8f9fa !important;
-    border: 1px solid #e9ecef !important;
+    background-color: #370400 !important;
+    border: 1px solid #370400 !important;
     border-radius: 0.25rem !important;
     transition: all 0.3s ease !important;
   }
 
   .winner-item:hover {
-    background-color: #e9ecef !important;
-    border-color: #adb5bd !important;
+    background-color: #370400 !important;
+    border-color: #fe9b01 !important;
   }
 
   .winner-item:last-child {
@@ -461,13 +491,13 @@ body {
 
   .winner-name {
     font-weight: bold !important;
-    color: #000000 !important;
+    color: #FFFFFF !important;
     font-size: 1rem !important;
     margin-bottom: 0.25rem !important;
   }
 
   .winner-date {
-    color: #666666 !important;
+    color: #eee !important;
     font-size: 0.75rem !important;
     opacity: 0.8 !important;
   }

@@ -3,11 +3,37 @@ import { resolve } from 'path';
 import pug from 'vite-plugin-pug';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 import legacy from '@vitejs/plugin-legacy';
+// import { viteImagemin as ViteImageOptimize } from 'vite-plugin-imagemin';
 
 export default defineConfig({
   build: {
     outDir: 'dist',
-    emptyOutDir: true
+    emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Split vendor libraries
+          vendor: ['canvas-confetti', 'axios'],
+          // Split Halloween theme into separate chunk
+          halloween: ['@js/api']
+        },
+        assetFileNames: (assetInfo) => {
+          const info = assetInfo.name.split('.');
+          const extType = info[info.length - 1];
+          if (/\.(png|jpe?g|svg|gif|tiff|bmp|ico)$/i.test(assetInfo.name)) {
+            return `assets/images/[name]-[hash][extname]`;
+          }
+          if (/\.(mp3|wav|ogg|webm)$/i.test(assetInfo.name)) {
+            return `assets/sound/[name]-[hash][extname]`;
+          }
+          return `assets/[name]-[hash][extname]`;
+        }
+      }
+    },
+    // Enable compression
+    reportCompressedSize: true,
+    // Optimize chunk size warnings
+    chunkSizeWarningLimit: 600
   },
   server: {
     port: 8888,
@@ -25,7 +51,12 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {}
-    }
+    },
+    devSourcemap: true
+  },
+  // Optimize dependencies
+  optimizeDeps: {
+    include: ['canvas-confetti', 'axios']
   },
   plugins: [
     pug({
@@ -70,5 +101,6 @@ export default defineConfig({
     legacy({
       targets: ['defaults', 'not IE 11']
     })
+    // TODO: Add image optimization plugin when compatible version is available
   ]
 });
