@@ -8,7 +8,7 @@ interface SlotConfigurations {
   /** User configuration for callback function that runs before spinning reel */
   onSpinStart?: () => void;
   /** User configuration for callback function that runs after spinning reel */
-  onSpinEnd?: () => void;
+  onSpinEnd?: (winner: string) => void;
 
   /** User configuration for callback function that runs after user updates the name list */
   onNameListChanged?: () => void;
@@ -220,8 +220,10 @@ export default class Slot {
 
     this.havePreviousWinner = true;
 
+    const winner = randomNames[randomNames.length - 1];
+
     if (this.onSpinEnd) {
-      this.onSpinEnd();
+      this.onSpinEnd(winner);
     }
     return true;
   }

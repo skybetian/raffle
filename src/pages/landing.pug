@@ -44,6 +44,12 @@ include ../mixins/icons
           label.input--switch
             input(type="checkbox" checked="true" id="enable-sound")
             span.slider
+
+        div.input-group.input-group--2-column
+          label.input-label(for="enable-background-music") Enable background music
+          label.input--switch
+            input(type="checkbox" checked="true" id="enable-background-music")
+            span.slider
       div.settings__panel__group
         button#settings-save.solid-button.solid-button Save
         button#settings-close.solid-button.solid-button--danger Discard and close

@@ -1,0 +1,856 @@
+body {
+  overflow: hidden !important;
+
+  #app {
+    background-color: #370400 !important;
+    // Fallback solid color while background loads
+    background-image: url('/assets/images/halloween/bg.png') !important;
+      // linear-gradient(45deg, #370400 0%, #4a0500 50%, #370400 100%),
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    overflow: hidden !important;
+    
+    // Smooth transition when background loads
+    transition: background-image 0.3s ease-in-out;
+  }
+  
+  // Preload critical background images
+  &::before {
+    content: '';
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+    background: 
+      url('/assets/images/halloween/bg.png'),
+      url('/assets/images/halloween/winner.png');
+    background-size: 1px 1px;
+  }
+
+  .settings__panel {
+    background-color: #370400 !important;
+  }
+
+  .input--switch {
+    .slider {
+      background-color: #FFF !important;
+    }
+
+    input:checked + .slider:before {
+      background-color: #370400 !important;
+    }
+  }
+
+  #draw-button {
+    background: url('/assets/images/halloween/button.png') !important;
+    background-size: contain !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    box-shadow: none !important;
+    height: 8rem !important;
+    width: 16rem !important;
+    color: #754400 !important;
+
+    p {
+      margin: 0px !important;
+      margin-top: -0.5rem !important;
+    }
+  }
+
+  .logo {
+    // Use smaller static PNG instead of 6.7MB GIF for better performance
+    background: url('/assets/images/halloween/logo.png') !important;
+    background-size: contain !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    box-shadow: none !important;
+    height: 5rem !important;
+    width: auto !important;
+    
+    // Add subtle animation to compensate for static image
+    animation: logoGlow 3s ease-in-out infinite alternate !important;
+  }
+  
+  @keyframes logoGlow {
+    0% {
+      filter: drop-shadow(0 0 5px rgba(254, 155, 1, 0.3));
+    }
+    100% {
+      filter: drop-shadow(0 0 15px rgba(254, 155, 1, 0.7));
+    }
+  }
+
+  .control-group {
+    z-index: 200;
+    svg {
+      fill: #370400 !important;
+    }
+  }
+
+  #settings-save.solid-button {
+    background-color: #fe9b01 !important; 
+  }
+
+  #settings-close.solid-button {
+    background-color: transparent !important; 
+    border: 1px solid #fe9b01 !important;
+    color: #fe9b01 !important;
+  }
+
+  .settings__title {
+    color: #fe9b01 !important;
+  }
+
+  .input-group {
+    margin: 0 0 2rem 0 !important;
+  }
+  
+  .slot__outer {
+    background-color: #370400 !important;
+  }
+
+  @keyframes ghostCombined1 {
+    0%, 100% {
+      transform: translateX(0px) translateY(0px) rotate(0deg) scale(1.0);
+      opacity: 0.7;
+    }
+    15% {
+      transform: translateX(50px) translateY(-30px) rotate(12deg) scale(1.02);
+      opacity: 0.85;
+    }
+    30% {
+      transform: translateX(-45px) translateY(-60px) rotate(-10deg) scale(1.06);
+      opacity: 0.95;
+    }
+    45% {
+      transform: translateX(20px) translateY(-80px) rotate(5deg) scale(1.08);
+      opacity: 1;
+    }
+    60% {
+      transform: translateX(60px) translateY(-70px) rotate(15deg) scale(1.05);
+      opacity: 0.9;
+    }
+    75% {
+      transform: translateX(-50px) translateY(-40px) rotate(-12deg) scale(1.03);
+      opacity: 0.8;
+    }
+    90% {
+      transform: translateX(15px) translateY(-10px) rotate(3deg) scale(1.01);
+      opacity: 0.75;
+    }
+  }
+
+  @keyframes ghostCombined2 {
+    0%, 100% {
+      transform: translateX(0px) translateY(0px) rotate(0deg) scale(1.0);
+      opacity: 0.75;
+    }
+    20% {
+      transform: translateX(-40px) translateY(-35px) rotate(-8deg) scale(1.04);
+      opacity: 0.85;
+    }
+    35% {
+      transform: translateX(55px) translateY(-65px) rotate(12deg) scale(1.07);
+      opacity: 0.95;
+    }
+    50% {
+      transform: translateX(25px) translateY(-85px) rotate(6deg) scale(1.08);
+      opacity: 1;
+    }
+    65% {
+      transform: translateX(-55px) translateY(-75px) rotate(-14deg) scale(1.06);
+      opacity: 0.9;
+    }
+    80% {
+      transform: translateX(45px) translateY(-45px) rotate(10deg) scale(1.03);
+      opacity: 0.8;
+    }
+    95% {
+      transform: translateX(-20px) translateY(-15px) rotate(-4deg) scale(1.01);
+      opacity: 0.77;
+    }
+  }
+
+  .object1 {
+    background: url('/assets/images/halloween/object1.png') !important;
+    background-size: contain !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    box-shadow: none !important;
+    height: 30rem !important;
+    width: 23rem !important;
+    position: absolute  !important;
+    top: calc(100dvh - 85%) !important;
+    left: 7rem !important;
+    z-index: 100;
+    pointer-events: none !important;
+    animation: ghostCombined1 6s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite !important;
+    transition: cubic-bezier(0.25, 0.46, 0.45, 0.94) 6s infinite;
+  }
+
+  .object2 {
+    background: url('/assets/images/halloween/object2.png') !important;
+    background-size: contain !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    box-shadow: none !important;
+    height: 25rem !important;
+    width: 20rem !important;
+    position: absolute  !important;
+    top: calc(100dvh - 80%) !important;
+    right: 6rem !important;
+    z-index: 100;
+    pointer-events: none !important;
+    animation: ghostCombined2 7s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite !important;
+    transition: cubic-bezier(0.25, 0.46, 0.45, 0.94) 6s infinite;
+  }
+
+  .settings {
+    z-index: 200 !important;
+
+    .settings-panel {
+      z-index: 200 !important;
+    }
+  }
+  
+  .input-label {
+    margin-bottom: 0rem !important;
+  }
+
+  .icon-button {
+    svg {
+      fill: #fe9b01 !important;
+    }
+  }
+
+  .winners-list {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    margin-bottom: 1rem !important;
+    padding: 0.5rem !important;
+    border: 1px solid #752c26 !important;
+    border-radius: 0.25rem !important;
+    background-color: #752c26 !important;
+    min-height: 0 !important;
+  }
+
+  // Winners sidebar theme matching settings sidebar
+  #winners {
+    .settings__panel {
+      background-color: #370400 !important;
+      display: flex !important;
+      flex-direction: column !important;
+    }
+    
+    .settings__panel__group:first-child {
+      flex: 1 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      min-height: 0 !important;
+    }
+    
+    .settings__panel__group:last-child {
+      flex-shrink: 0 !important;
+    }
+  }
+
+  #winners .settings__title {
+    color: #fe9b01 !important;
+  }
+
+  #clear-winners.solid-button {
+    background-color: #fe9b01 !important; 
+    color: #ffffff !important;
+  }
+
+  #winners-close.solid-button {
+    background-color: transparent !important; 
+    border: 1px solid #fe9b01 !important;
+    color: #fe9b01 !important;
+  }
+
+  #clear-winners,
+  #winners-close {
+    margin: 1.875rem 0 0 0;
+    display: block;
+    width: 100%;
+  }
+
+  // Bat overlay animations
+  .bat-overlay {
+    width: 100% !important;
+    height: 100% !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    z-index: 999 !important;
+    pointer-events: none !important;
+  }
+
+  .bat-overlay.bat-overlay-1 svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50% !important;
+    height: 50% !important;
+  }
+  
+  .bat-overlay.bat-overlay-2 svg {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50% !important;
+    height: 50% !important;
+  }
+
+  .bat-overlay.bat-overlay-3 svg {
+    position: absolute;
+    bottom: 0;
+    width: 50% !important;
+    height: 50% !important;
+  }
+
+  .shadow {
+    -webkit-filter: blur(6px) !important;
+    filter: blur(6px) !important;
+    opacity: 0.5 !important;
+  }
+
+  .bat {
+    animation-direction: normal !important;
+    animation: move 15s infinite !important;
+    animation-timing-function: ease-in-out !important;
+    transform-origin: 50% 50% !important;
+    fill: #000 !important;
+  }
+
+  .wing {
+    transform-origin: 50% 50% !important;
+    animation-direction: normal !important;
+    animation: wing 1s infinite !important;
+    animation-timing-function: ease-in-out !important;
+  }
+
+  .wing1 {
+    transform-origin: 50% 50% !important;
+    animation-direction: normal !important;
+    animation: wing1 1s infinite !important;
+    animation-timing-function: ease-in-out !important;
+  }
+
+  @keyframes move {
+    0% {
+      transform: translate(-50px, -150px) rotate(10deg);
+    }
+    25% {
+      transform: translate(-150px, 80px) rotate(-10deg);
+    }
+    50% {
+      transform: translate(50px, -80px) rotate(10deg);
+    }
+    75% {
+      transform: translate(-190px, -100px) rotate(-10deg);
+    }
+    100% {
+      transform: translate(-50px, -150px) rotate(10deg);
+    }
+  }
+
+  @keyframes wing {
+    0% {
+      transform: scale(1) rotate(0deg);
+    }
+    50% {
+      transform: scaleX(0.7) rotate(-10deg);
+    }
+    100% {
+      transform: scale(1) rotate(0deg);
+    }
+  }
+
+  @keyframes wing1 {
+    0% {
+      transform: scale(1) rotate(0deg);
+    }
+    50% {
+      transform: scaleX(0.7) rotate(10deg);
+    }
+    100% {
+      transform: scale(1) rotate(0deg);
+    }
+  }
+
+  // Individual bat positioning and animations
+  .bat-overlay-1 {
+    top: 50% !important;
+    left: 0 !important;
+    transform: translateY(-50%) !important;
+  }
+
+  .bat-overlay-2 {
+    top: 50% !important;
+    right: 0 !important;
+    left: auto !important;
+    transform: translateY(-50%) !important;
+  }
+
+  .bat-overlay-3 {
+    bottom: 0 !important;
+    top: auto !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+  }
+
+  .bat-2 {
+    animation: move2 18s infinite !important;
+    animation-timing-function: ease-in-out !important;
+    animation-delay: -5s !important;
+  }
+
+  .bat-3 {
+    animation: move3 12s infinite !important;
+    animation-timing-function: ease-in-out !important;
+    animation-delay: -8s !important;
+  }
+
+  @keyframes move2 {
+    0% {
+      transform: translate(100px, -100px) rotate(-10deg);
+    }
+    25% {
+      transform: translate(-30px, 60px) rotate(15deg);
+    }
+    50% {
+      transform: translate(170px, -60px) rotate(-5deg);
+    }
+    75% {
+      transform: translate(-50px, -120px) rotate(12deg);
+    }
+    100% {
+      transform: translate(100px, -100px) rotate(-10deg);
+    }
+  }
+
+  @keyframes move3 {
+    0% {
+      transform: translate(-20px, 100px) rotate(5deg);
+    }
+    30% {
+      transform: translate(90px, -40px) rotate(-12deg);
+    }
+    60% {
+      transform: translate(-110px, 50px) rotate(8deg);
+    }
+    100% {
+      transform: translate(-20px, 100px) rotate(5deg);
+    }
+  }
+
+  .empty-winners {
+    text-align: center !important;
+    color: #666666 !important;
+    font-style: italic !important;
+    padding: 2rem !important;
+  }
+
+  .generated-text {
+    position: absolute !important;
+    top: 1rem !important;
+    left: 1rem !important;
+    color: #fe9b01 !important;
+    font-weight: bold !important;
+    font-size: 1rem !important;
+    z-index: 150 !important;
+    font-family: monospace !important;
+  }
+
+  .winner-item {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    padding: 0.75rem !important;
+    margin-bottom: 0.5rem !important;
+    background-color: #370400 !important;
+    border: 1px solid #370400 !important;
+    border-radius: 0.25rem !important;
+    transition: all 0.3s ease !important;
+  }
+
+  .winner-item:hover {
+    background-color: #370400 !important;
+    border-color: #fe9b01 !important;
+  }
+
+  .winner-item:last-child {
+    margin-bottom: 0 !important;
+  }
+
+  .winner-info {
+    flex: 1 !important;
+  }
+
+  .winner-name {
+    font-weight: bold !important;
+    color: #FFFFFF !important;
+    font-size: 1rem !important;
+    margin-bottom: 0.25rem !important;
+  }
+
+  .winner-date {
+    color: #eee !important;
+    font-size: 0.75rem !important;
+    opacity: 0.8 !important;
+  }
+
+  .winner-actions {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-end !important;
+    gap: 0.5rem !important;
+  }
+
+  .winner-rank {
+    background-color: #fe9b01 !important;
+    color: #370400 !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 1rem !important;
+    font-weight: bold !important;
+    font-size: 0.75rem !important;
+    min-width: 2rem !important;
+    text-align: center !important;
+  }
+
+  .winner-raffle {
+    color: #666666 !important;
+    font-size: 0.7rem !important;
+    opacity: 0.9 !important;
+    margin-top: 0.25rem !important;
+  }
+
+  .notification-badge {
+    font-size: 0.7rem !important;
+    padding: 0.2rem 0.4rem !important;
+    border-radius: 0.5rem !important;
+    font-weight: bold !important;
+    
+    &.notified {
+      background-color: rgba(34, 197, 94, 0.2) !important;
+      color: #22c55e !important;
+      border: 1px solid rgba(34, 197, 94, 0.3) !important;
+    }
+    
+    &.not-notified {
+      background-color: rgba(245, 158, 11, 0.2) !important;
+      color: #f59e0b !important;
+      border: 1px solid rgba(245, 158, 11, 0.3) !important;
+    }
+  }
+
+  .notify-btn {
+    background-color: #fe9b01 !important;
+    color: #370400 !important;
+    border: none !important;
+    padding: 0.3rem 0.6rem !important;
+    border-radius: 0.3rem !important;
+    font-size: 0.7rem !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    
+    &:hover:not(:disabled) {
+      background-color: #fff !important;
+      transform: translateY(-1px) !important;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+    }
+    
+    &:disabled {
+      opacity: 0.6 !important;
+      cursor: not-allowed !important;
+      background-color: #6b7280 !important;
+    }
+  }
+
+  .winner-modal {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    opacity: 0 !important;
+    transition: opacity 0.3s ease !important;
+  }
+
+  .winner-modal.show {
+    opacity: 1 !important;
+    z-index: 1000 !important;
+  }
+
+  .winner-modal__overlay {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background-color: rgba(55, 4, 0, 0.9) !important;
+    backdrop-filter: blur(5px) !important;
+  }
+
+  .winner-modal__container {
+    position: relative !important;
+    z-index: 1001 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-direction: column;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .winner-modal__circle {
+    position: relative !important;
+    width: 100% !important;
+    // height: auto !important;
+    height: calc(100dvh - 30%) !important;
+    background-image: url('/assets/images/halloween/winner.png') !important;
+    background-size: contain !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    animation: halloweenGlow 2s ease-in-out infinite alternate !important;
+  }
+
+  .winner-modal__content {
+    text-align: center !important;
+    color: #fe9b01 !important;
+    padding: 3rem 0 !important;
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+
+  .winner-modal__title {
+    font-size: 3rem !important;
+    font-weight: bold !important;
+    margin-bottom: 1rem !important;
+    color: #FFFFFF !important;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8) !important;
+  }
+
+  .winner-modal__name {
+    width: 25rem;
+    font-size: 2.2rem !important;
+    font-weight: bold !important;
+    // margin-bottom: 1.5rem !important;
+    margin-left: 1.5rem !important;
+    color: #fff !important;
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9) !important;
+    word-wrap: break-word !important;
+    line-height: 1.2 !important;
+  }
+
+  .winner-modal__close {
+    background: url('/assets/images/halloween/button.png') !important;
+    background-size: contain !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    box-shadow: none !important;
+    height: 8rem !important;
+    width: 16rem !important;
+    color: #754400 !important;
+    padding: 1rem 0.625rem !important;
+    font-size: 1.75rem !important;
+    line-height: 1.75rem !important;
+    font-weight: 700 !important;
+    font-family: inherit !important;
+    text-decoration: none !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    cursor: pointer !important;
+    outline: none !important;
+    border: none !important;
+    // background-color: #fe9b01 !important;
+    // color: #370400 !important;
+    // border: none !important;
+    // padding: 0.8rem 1.5rem !important;
+    // font-size: 1rem !important;
+    // font-weight: bold !important;
+    // border-radius: 25px !important;
+    // cursor: pointer !important;
+    // transition: all 0.3s ease !important;
+    // box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  // .winner-modal__close:hover {
+  //   background-color: #fff !important;
+  //   transform: translateY(-2px) !important;
+  //   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4) !important;
+  // }
+
+  @keyframes halloweenGlow {
+    0% {
+      filter: drop-shadow(0 0 10px rgba(254, 155, 1, 0.5));
+    }
+    100% {
+      filter: drop-shadow(0 0 20px rgba(254, 155, 1, 0.8));
+    }
+  }
+
+  // Sadako Shocking Effect
+  .sadako-effect {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    opacity: 0 !important;
+  }
+
+  .sadako-effect.show {
+    opacity: 1 !important;
+    z-index: 9999 !important;
+    animation: sadakoShock 3s ease-out forwards !important;
+  }
+
+  .sadako-effect__overlay {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background-color: #000 !important;
+    animation: flashEffect 3s ease-out !important;
+  }
+
+  .sadako-effect__container {
+    position: relative !important;
+    z-index: 10000 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .sadako-effect__image {
+    width: 100% !important;
+    height: 100% !important;
+    background-image: url('/assets/images/halloween/sadako.png') !important;
+    background-size: cover !important;
+    background-position: center top !important;
+    background-repeat: no-repeat !important;
+    animation: sadakoAppear 3s ease-out forwards !important;
+    filter: contrast(1.5) brightness(0.8) !important;
+  }
+
+  @keyframes sadakoShock {
+    0% {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    10% {
+      opacity: 1;
+      transform: scale(1.1);
+      filter: brightness(2) contrast(2);
+    }
+    20% {
+      transform: scale(0.95);
+      filter: brightness(0.5) contrast(1.8);
+    }
+    30% {
+      transform: scale(1.05);
+      filter: brightness(1.5) contrast(1.5);
+    }
+    50% {
+      transform: scale(1);
+      filter: brightness(0.8) contrast(1.2);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+      filter: brightness(0.6) contrast(1);
+    }
+  }
+
+  @keyframes flashEffect {
+    0% {
+      background-color: #000;
+    }
+    5% {
+      background-color: #fff;
+    }
+    10% {
+      background-color: #000;
+    }
+    15% {
+      background-color: #fff;
+    }
+    20% {
+      background-color: #000;
+    }
+    25% {
+      background-color: #fff;
+    }
+    30% {
+      background-color: #000;
+    }
+    100% {
+      background-color: #000;
+    }
+  }
+
+  @keyframes sadakoAppear {
+    0% {
+      transform: scale(0.5) rotate(-5deg);
+      filter: blur(10px) brightness(2) contrast(3);
+    }
+    20% {
+      transform: scale(1.2) rotate(2deg);
+      filter: blur(5px) brightness(1.5) contrast(2);
+    }
+    40% {
+      transform: scale(0.9) rotate(-1deg);
+      filter: blur(2px) brightness(1) contrast(1.5);
+    }
+    60% {
+      transform: scale(1.1) rotate(1deg);
+      filter: blur(1px) brightness(0.8) contrast(1.3);
+    }
+    80% {
+      transform: scale(0.95) rotate(-0.5deg);
+      filter: blur(0px) brightness(0.7) contrast(1.2);
+    }
+    100% {
+      transform: scale(1) rotate(0deg);
+      filter: blur(0px) brightness(0.6) contrast(1);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .winner-modal__circle {
+      width: 300px !important;
+      height: 300px !important;
+    }
+
+    .winner-modal__content {
+      padding: 1.5rem !important;
+      max-width: 250px !important;
+    }
+
+    .winner-modal__title {
+      font-size: 1.5rem !important;
+    }
+
+    .winner-modal__name {
+      font-size: 1.8rem !important;
+    }
+  }
+}

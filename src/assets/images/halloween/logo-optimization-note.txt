@@ -1,0 +1,5 @@
+<!-- This is a placeholder for an optimized logo -->
+<!-- Original logo.gif was 6.7MB - needs to be replaced with: -->
+<!-- 1. A smaller static PNG/WebP version for performance -->
+<!-- 2. Or a CSS animation to replicate the effect -->
+<!-- 3. Or an optimized GIF with reduced frames/colors -->

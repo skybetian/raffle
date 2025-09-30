@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 $color-white: #ffffff;
 $color-light-grey: #e8e8e8;
 $color-mid-grey: #999999;
@@ -26,9 +28,9 @@ $color-title-border: $color-yellow;
 // button
 $color-button-text: $color-white;
 $color-button-default-background: $color-yellow;
-$color-button-default-hover-background: lighten($color-yellow, 5%);
+$color-button-default-hover-background: color.adjust($color-yellow, $lightness: 5%);
 $color-button-danger-background: $color-blood-orange;
-$color-button-danger-hover-background: lighten($color-blood-orange, 5%);
+$color-button-danger-hover-background: color.adjust($color-blood-orange, $lightness: 5%);
 
 // slot
 $color-slot-background: $color-yellow;
@@ -38,7 +40,7 @@ $color-slot-text: $color-black;
 
 // settings
 $color-settings-mask: rgba($color-black, 0.6);
-$color-settings-background: darken($color-red-step5, 8%);
+$color-settings-background: color.adjust($color-red-step5, $lightness: -8%);
 
 // textarea
 $color-input-background: $color-light-grey;
@@ -47,4 +49,4 @@ $color-input-text: $color-black;
 
 // switch
 $color-switch-handle-disabled: $color-dark-grey;
-$color-switch-handle: darken($color-red-step5, 8%);
+$color-switch-handle: color.adjust($color-red-step5, $lightness: -8%);

@@ -12,3 +12,8 @@ bundle-analyzer-plugin-report.html
 .env.production.local
 
 /design/appicon-templates-assets
+
+package-lock.json
+yarn.lock
+
+node_modules

@@ -21,6 +21,20 @@ html(xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en")
     //- PWA
     include ./partials/webapp.pug
 
+    //- Resource Preloading for Performance
+    link(rel="preload" href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800&display=swap" as="style")
+    link(rel="preload" href="/assets/images/halloween/bg.png" as="image")
+    link(rel="preconnect" href="https://fonts.googleapis.com")
+    link(rel="preconnect" href="https://fonts.gstatic.com" crossorigin)
+    
+    //- Critical CSS (inline for fastest render)
+    style.
+      body{overflow:hidden!important}
+      #app{background-color:#370400!important;background-image:linear-gradient(45deg,#370400 0%,#4a0500 50%,#370400 100%),url('/assets/images/halloween/bg.png')!important;background-size:cover!important;background-position:center!important;background-repeat:no-repeat!important;overflow:hidden!important;transition:background-image .3s ease-in-out}
+      .slot__outer{background-color:#370400!important}
+      .logo{background:url('/assets/images/halloween/logo.png')!important;background-size:contain!important;background-position:center!important;background-repeat:no-repeat!important;box-shadow:none!important;height:5rem!important;width:auto!important;animation:logoGlow 3s ease-in-out infinite alternate!important}
+      @keyframes logoGlow{0%{filter:drop-shadow(0 0 5px rgba(254,155,1,0.3))}100%{filter:drop-shadow(0 0 15px rgba(254,155,1,0.7))}}
+
     //- Favicons
     <!-- webpackIgnore: true -->
     link(rel="shortcut icon" href="assets/images/favicon.ico" type="image/x-icon")

@@ -1,3 +1,5 @@
+@use 'sass:string';
+
 #lucky-draw {
   width: 100%;
   text-align: center;
@@ -46,8 +48,8 @@
     --safe-area-inset-right: env(safe-area-inset-right);
   }
 
-  @supports (padding: unquote('max(0px)')) {
-    right: unquote('max(1rem, var(--safe-area-inset-right))');
+  @supports (padding: string.unquote('max(0px)')) {
+    right: string.unquote('max(1rem, var(--safe-area-inset-right))');
   }
 
   .icon-button {
